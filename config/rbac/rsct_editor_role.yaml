@@ -1,0 +1,24 @@
+# permissions for end users to edit rscts.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: rsct-editor-role
+rules:
+- apiGroups:
+  - rsct.ibm.com
+  resources:
+  - rscts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rsct.ibm.com
+  resources:
+  - rscts/status
+  verbs:
+  - get
