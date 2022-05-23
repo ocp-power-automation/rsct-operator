@@ -41,8 +41,8 @@ type Config struct {
 // RSCTReconciler reconciles a RSCT object
 type RSCTReconciler struct {
 	config Config
-	client client.Client
-	scheme *runtime.Scheme
+	Client client.Client
+	Scheme *runtime.Scheme
 	log    logr.Logger
 }
 
@@ -64,7 +64,7 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	reqLogger.Info("reconciling RSCT")
 
 	rsct := &rsctv1alpha1.RSCT{}
-	if err := r.client.Get(ctx, req.NamespacedName, rsct); err != nil {
+	if err := r.Client.Get(ctx, req.NamespacedName, rsct); err != nil {
 		if errors.IsNotFound(err) {
 			reqLogger.Info("RSCT not found; reconciliation will be skipped")
 			return reconcile.Result{}, nil
@@ -79,12 +79,12 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return reconcile.Result{}, fmt.Errorf("failed to get powervm-rmc service account: %w", err)
 	}
 
-	_, currentDaemonSet, err := r.ensureRSCTDaemonSet(ctx, r.config.Namespace, r.config.Image, sa, rsct)
+	_, currentDaemonSet, err := r.ensureRSCTDaemonSet(ctx, sa, rsct)
 	if err != nil {
 		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc daemonSet: %w", err)
 	}
 	if err := r.updateRSCTStatus(ctx, rsct, currentDaemonSet); err != nil {
-		return reconcile.Result{}, fmt.Errorf("failed to update RSCT custom resource %s: %w", RSCT.Name, err)
+		return reconcile.Result{}, fmt.Errorf("failed to update RSCT custom resource %s: %w", rsct.Name, err)
 	}
 
 	return reconcile.Result{}, nil

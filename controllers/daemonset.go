@@ -20,13 +20,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/go-cmp/cmp"
-
+	rsctv1alpha1 "github.com/mjturek/rsct-operator/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	utilpointer "k8s.io/utils/pointer"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
@@ -39,23 +40,39 @@ const (
 	rmcAppName          = "powervm-rmc"
 )
 
+type DaemonSetConfig struct {
+	Namespace      string
+	Name           string
+	Image          string
+	MemoryLimit    string
+	CPURequest     string
+	MemoryRequest  string
+	ServiceAccount *corev1.ServiceAccount
+}
+
 // ensureRSCTDaemonSet ensures that the RSCT DaemonSet xists.
 // Returns a Boolean value indicating whether the daemonSet exists, a pointer to the daemonSet, and an error when relevant.
-func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, namespace, image string, serviceAccount *corev1.ServiceAccount, rsct *rsctv1alpha1.RSCT) (bool, *appsv1.Deployment, error) {
+func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount *corev1.ServiceAccount, rsct *rsctv1alpha1.RSCT) (bool, *appsv1.DaemonSet, error) {
 
-	// TODO(mjturek): Do this in a less hardcoded fashion.
-	nsName := types.NamespacedName{Namespace: "powervm-rmc", Name: "powervm-rmc"}
+	desired, err := desiredRSCTDaemonSet(&DaemonSetConfig{
+		Namespace:      r.config.Namespace,
+		Name:           r.config.Name,
+		Image:          r.config.Image,
+		MemoryLimit:    "1Gi",
+		MemoryRequest:  "500Mi",
+		CPURequest:     "0.1",
+		ServiceAccount: serviceAccount,
+	})
 
-	desired, err := desiredRSCTDaemonSet()
 	if err != nil {
 		return false, nil, fmt.Errorf("failed to build RSCT daemonSet: %w", err)
 	}
 
-	if err := controllerutil.SetControllerReference(rsct, desired, r.scheme); err != nil {
+	if err := controllerutil.SetControllerReference(rsct, desired, r.Scheme); err != nil {
 		return false, nil, fmt.Errorf("failed to set the controller reference for daemonSet: %w", err)
 	}
 
-	exist, current, err := r.currentRSCTDaemonSet(ctx, nsName)
+	exist, current, err := r.currentRSCTDaemonSet(ctx)
 	if err != nil {
 		return false, nil, fmt.Errorf("failed to get current RSCT daemonSet: %w", err)
 	}
@@ -65,34 +82,34 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, namespace, ima
 		if err := r.createRSCTDaemonSet(ctx, desired); err != nil {
 			return false, nil, err
 		}
-		return r.currentRSCTDaemonSet(ctx, nsName)
+		return r.currentRSCTDaemonSet(ctx)
 	}
 
 	// update the deployment
-	if updated, err := r.updateRSCT(ctx, current, desired); err != nil {
+	if updated, err := r.updateRSCTDaemonSet(ctx, current, desired); err != nil {
 		return true, current, err
 	} else if updated {
-		return r.currentRSCTDaemonSet(ctx, nsName)
+		return r.currentRSCTDaemonSet(ctx)
 	}
 
 	return true, current, nil
 }
 
 // currentExternalDNSDeployment gets the current externalDNS deployment resource.
-func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context, nsName types.NamespacedName) (bool, *appsv1.Deployment, error) {
-	depl := &appsv1.Deployment{}
-	if err := r.client.Get(ctx, nsName, depl); err != nil {
+func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context) (bool, *appsv1.DaemonSet, error) {
+	ds := &appsv1.DaemonSet{}
+	nsName := types.NamespacedName{Namespace: r.config.Namespace, Name: r.config.Name}
+	if err := r.Client.Get(ctx, nsName, ds); err != nil {
 		if errors.IsNotFound(err) {
 			return false, nil, nil
 		}
 		return false, nil, err
 	}
-	return true, depl, nil
+	return true, ds, nil
 }
 
 // desiredExternalDNSDeployment returns the desired deployment resource.
-func desiredRSCTDaemonSet(config *RSCTConfig) (*appsv1.DaemonSet, error) {
-
+func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 	matchLabels := map[string]string{
 		"app": "powervm-rmc",
 	}
@@ -154,11 +171,11 @@ func desiredRSCTDaemonSet(config *RSCTConfig) (*appsv1.DaemonSet, error) {
 							},
 							Resources: corev1.ResourceRequirements{
 								Limits: corev1.ResourceList{
-									corev1.ResourceMemory: config.memoryLimit,
+									corev1.ResourceMemory: resource.MustParse(config.MemoryLimit),
 								},
 								Requests: corev1.ResourceList{
-									corev1.ResourceCPU:    config.cpuRequest,
-									corev1.ResourceMemory: config.memoryRequest,
+									corev1.ResourceCPU:    resource.MustParse(config.CPURequest),
+									corev1.ResourceMemory: resource.MustParse(config.MemoryRequest),
 								},
 							},
 							VolumeMounts: []corev1.VolumeMount{
@@ -169,15 +186,15 @@ func desiredRSCTDaemonSet(config *RSCTConfig) (*appsv1.DaemonSet, error) {
 								},
 							},
 							SecurityContext: &corev1.SecurityContext{
-								Privileged: true,
-								RunAsUser:  0,
+								Privileged: utilpointer.Bool(true),
+								RunAsUser:  utilpointer.Int64(0),
 							},
 						},
 					},
 					HostNetwork:        true,
 					NodeSelector:       nodeSelectorLabels,
 					RestartPolicy:      corev1.RestartPolicyAlways,
-					ServiceAccountName: config.Name,
+					ServiceAccountName: config.ServiceAccount.Name,
 					Volumes:            volumes,
 					Tolerations:        tolerations,
 				},
@@ -190,7 +207,7 @@ func desiredRSCTDaemonSet(config *RSCTConfig) (*appsv1.DaemonSet, error) {
 
 // createExternalDNSDeployment creates the given deployment using the reconciler's client.
 func (r *RSCTReconciler) createRSCTDaemonSet(ctx context.Context, ds *appsv1.DaemonSet) error {
-	if err := r.client.Create(ctx, ds); err != nil {
+	if err := r.Client.Create(ctx, ds); err != nil {
 		return fmt.Errorf("failed to create RSCT daemonset %s/%s: %w", ds.Namespace, ds.Name, err)
 	}
 	r.log.Info("created RSCT daemonset", "namespace", ds.Namespace, "name", ds.Name)
@@ -205,7 +222,7 @@ func (r *RSCTReconciler) updateRSCTDaemonSet(ctx context.Context, current, desir
 		return false, nil
 	}
 
-	if err := r.client.Update(ctx, updated); err != nil {
+	if err := r.Client.Update(ctx, updated); err != nil {
 		return false, fmt.Errorf("failed to update RSCT DaemonSet %s/%s: %w", desired.Namespace, desired.Name, err)
 	}
 	r.log.Info("updated RSCT DaemonSet", "namespace", desired.Namespace, "name", desired.Name)
@@ -214,7 +231,7 @@ func (r *RSCTReconciler) updateRSCTDaemonSet(ctx context.Context, current, desir
 
 // rsctDaemonSetChanged returns a boolean indicating if an update is needed and the desired daemonset.
 func rsctDaemonSetChanged(current, expected *appsv1.DaemonSet) (bool, *appsv1.DaemonSet) {
-	updated := current.DeepCopy()
+	//updated := current.DeepCopy()
 	//TODO(mjturek): Do what the comment says
 	return true, nil
 }

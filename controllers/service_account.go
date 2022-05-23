@@ -37,7 +37,7 @@ func (r *RSCTReconciler) ensureRSCTServiceAccount(ctx context.Context, namespace
 
 	desired := desiredRSCTServiceAccount(nsName)
 
-	if err := controllerutil.SetControllerReference(rsct, desired, r.scheme); err != nil {
+	if err := controllerutil.SetControllerReference(rsct, desired, r.Scheme); err != nil {
 		return false, nil, fmt.Errorf("failed to set the controller reference for service account: %w", err)
 	}
 
@@ -59,7 +59,7 @@ func (r *RSCTReconciler) ensureRSCTServiceAccount(ctx context.Context, namespace
 // currentExternalDNSServiceAccount gets the current externalDNS service account resource.
 func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName types.NamespacedName) (bool, *corev1.ServiceAccount, error) {
 	sa := &corev1.ServiceAccount{}
-	if err := r.client.Get(ctx, nsName, sa); err != nil {
+	if err := r.Client.Get(ctx, nsName, sa); err != nil {
 		if errors.IsNotFound(err) {
 			return false, nil, nil
 		}
@@ -69,7 +69,7 @@ func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName t
 }
 
 // desiredExternalDNSServiceAccount returns the desired serivce account resource.
-func desiredRSCTServiceAccount(nsName types.NamespacedName, rsct *operatorv1alpha1.RSCT) *corev1.ServiceAccount {
+func desiredRSCTServiceAccount(nsName types.NamespacedName) *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: nsName.Namespace,
@@ -80,7 +80,7 @@ func desiredRSCTServiceAccount(nsName types.NamespacedName, rsct *operatorv1alph
 
 // createRSCTServiceAccount creates the given service account using the reconciler's client.
 func (r *RSCTReconciler) createRSCTServiceAccount(ctx context.Context, sa *corev1.ServiceAccount) error {
-	if err := r.client.Create(ctx, sa); err != nil {
+	if err := r.Client.Create(ctx, sa); err != nil {
 		return fmt.Errorf("failed to create RSCT service account %s/%s: %w", sa.Namespace, sa.Name, err)
 	}
 
