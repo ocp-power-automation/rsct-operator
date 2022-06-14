@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -43,7 +42,6 @@ type RSCTReconciler struct {
 	config Config
 	Client client.Client
 	Scheme *runtime.Scheme
-	log    logr.Logger
 }
 
 //+kubebuilder:rbac:groups=rsct.ibm.com,resources=rscts,verbs=get;list;watch;create;update;patch;delete
@@ -60,13 +58,9 @@ type RSCTReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
 func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	reqLogger := r.log.WithValues("RSCT", req.NamespacedName)
-	reqLogger.Info("reconciling RSCT")
-
 	rsct := &rsctv1alpha1.RSCT{}
 	if err := r.Client.Get(ctx, req.NamespacedName, rsct); err != nil {
 		if errors.IsNotFound(err) {
-			reqLogger.Info("RSCT not found; reconciliation will be skipped")
 			return reconcile.Result{}, nil
 		}
 		return reconcile.Result{}, fmt.Errorf("failed to get RSCT %s: %w", req, err)

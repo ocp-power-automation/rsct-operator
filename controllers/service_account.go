@@ -84,6 +84,5 @@ func (r *RSCTReconciler) createRSCTServiceAccount(ctx context.Context, sa *corev
 		return fmt.Errorf("failed to create RSCT service account %s/%s: %w", sa.Namespace, sa.Name, err)
 	}
 
-	r.log.Info("created RSCT service account", "namespace", sa.Namespace, "name", sa.Name)
 	return nil
 }

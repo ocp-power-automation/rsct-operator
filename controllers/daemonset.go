@@ -210,7 +210,6 @@ func (r *RSCTReconciler) createRSCTDaemonSet(ctx context.Context, ds *appsv1.Dae
 	if err := r.Client.Create(ctx, ds); err != nil {
 		return fmt.Errorf("failed to create RSCT daemonset %s/%s: %w", ds.Namespace, ds.Name, err)
 	}
-	r.log.Info("created RSCT daemonset", "namespace", ds.Namespace, "name", ds.Name)
 	return nil
 }
 
@@ -225,7 +224,6 @@ func (r *RSCTReconciler) updateRSCTDaemonSet(ctx context.Context, current, desir
 	if err := r.Client.Update(ctx, updated); err != nil {
 		return false, fmt.Errorf("failed to update RSCT DaemonSet %s/%s: %w", desired.Namespace, desired.Name, err)
 	}
-	r.log.Info("updated RSCT DaemonSet", "namespace", desired.Namespace, "name", desired.Name)
 	return true, nil
 }
 
