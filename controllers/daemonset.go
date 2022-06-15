@@ -32,7 +32,6 @@ import (
 )
 
 const (
-	rsctBaseName        = "powervm-rmc"
 	arch                = "ppc64le"
 	masterNodeRoleLabel = "node-role.kubernetes.io/master"
 	osID                = "rhcos"
