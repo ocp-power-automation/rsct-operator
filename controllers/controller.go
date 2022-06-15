@@ -29,17 +29,18 @@ import (
 	rsctv1alpha1 "github.com/mjturek/rsct-operator/api/v1alpha1"
 )
 
-type Config struct {
-	Name string
+type RSCTConfig struct {
 	// Namespace is the namespace that RSCT should be deployed in.
 	Namespace string
+	// Name is the name of the operand
+	Name string
 	// Image is the RSCT image to use.
 	Image string
 }
 
 // RSCTReconciler reconciles a RSCT object
 type RSCTReconciler struct {
-	config Config
+	Config RSCTConfig
 	Client client.Client
 	Scheme *runtime.Scheme
 }
@@ -66,7 +67,12 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return reconcile.Result{}, fmt.Errorf("failed to get RSCT %s: %w", req, err)
 	}
 
-	haveServiceAccount, sa, err := r.ensureRSCTServiceAccount(ctx, r.config.Namespace, rsct)
+	// TODO(mjturek): Make config... configurable
+	r.Config.Namespace = rsct.Namespace
+	r.Config.Name = rsct.Name
+	r.Config.Image = "quay.io/powercloud/rsct-ppc64le:latest"
+
+	haveServiceAccount, sa, err := r.ensureRSCTServiceAccount(ctx, rsct)
 	if err != nil {
 		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc service account: %w", err)
 	} else if !haveServiceAccount {

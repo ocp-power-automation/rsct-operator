@@ -30,10 +30,8 @@ import (
 )
 
 // ensureExternalDNSServiceAccount ensures that the externalDNS service account exists.
-func (r *RSCTReconciler) ensureRSCTServiceAccount(ctx context.Context, namespace string, rsct *operatorv1alpha1.RSCT) (bool, *corev1.ServiceAccount, error) {
-
-	// TODO(mjturek): Do this in a less hardcoded fashion.
-	nsName := types.NamespacedName{Namespace: "powervm-rmc", Name: "powervm-rmc"}
+func (r *RSCTReconciler) ensureRSCTServiceAccount(ctx context.Context, rsct *operatorv1alpha1.RSCT) (bool, *corev1.ServiceAccount, error) {
+	nsName := types.NamespacedName{Namespace: rsct.Namespace, Name: rsct.Name}
 
 	desired := desiredRSCTServiceAccount(nsName)
 

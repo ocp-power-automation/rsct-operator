@@ -37,6 +37,7 @@ const (
 	osID                = "rhcos"
 	rmcPort             = 657
 	rmcAppName          = "powervm-rmc"
+	rsctImage           = "quay.io/powercloud/rsct-ppc64le:latest"
 )
 
 type DaemonSetConfig struct {
@@ -54,9 +55,9 @@ type DaemonSetConfig struct {
 func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount *corev1.ServiceAccount, rsct *rsctv1alpha1.RSCT) (bool, *appsv1.DaemonSet, error) {
 
 	desired, err := desiredRSCTDaemonSet(&DaemonSetConfig{
-		Namespace:      r.config.Namespace,
-		Name:           r.config.Name,
-		Image:          r.config.Image,
+		Namespace:      r.Config.Namespace,
+		Name:           r.Config.Name,
+		Image:          r.Config.Image,
 		MemoryLimit:    "1Gi",
 		MemoryRequest:  "500Mi",
 		CPURequest:     "0.1",
@@ -97,7 +98,7 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount
 // currentExternalDNSDeployment gets the current externalDNS deployment resource.
 func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context) (bool, *appsv1.DaemonSet, error) {
 	ds := &appsv1.DaemonSet{}
-	nsName := types.NamespacedName{Namespace: r.config.Namespace, Name: r.config.Name}
+	nsName := types.NamespacedName{Namespace: r.Config.Namespace, Name: r.Config.Name}
 	if err := r.Client.Get(ctx, nsName, ds); err != nil {
 		if errors.IsNotFound(err) {
 			return false, nil, nil
