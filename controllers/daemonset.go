@@ -47,12 +47,11 @@ type DaemonSetConfig struct {
 	MemoryLimit    string
 	CPURequest     string
 	MemoryRequest  string
-	ServiceAccount *corev1.ServiceAccount
 }
 
 // ensureRSCTDaemonSet ensures that the RSCT DaemonSet xists.
 // Returns a Boolean value indicating whether the daemonSet exists, a pointer to the daemonSet, and an error when relevant.
-func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount *corev1.ServiceAccount, rsct *rsctv1alpha1.RSCT) (bool, *appsv1.DaemonSet, error) {
+func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, rsct *rsctv1alpha1.RSCT) (bool, *appsv1.DaemonSet, error) {
 
 	desired, err := desiredRSCTDaemonSet(&DaemonSetConfig{
 		Namespace:      r.Config.Namespace,
@@ -61,7 +60,6 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount
 		MemoryLimit:    "1Gi",
 		MemoryRequest:  "500Mi",
 		CPURequest:     "0.1",
-		ServiceAccount: serviceAccount,
 	})
 
 	if err != nil {
@@ -194,7 +192,6 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 					HostNetwork:        true,
 					NodeSelector:       nodeSelectorLabels,
 					RestartPolicy:      corev1.RestartPolicyAlways,
-					ServiceAccountName: config.ServiceAccount.Name,
 					Volumes:            volumes,
 					Tolerations:        tolerations,
 				},

@@ -72,14 +72,15 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	r.Config.Name = rsct.Name
 	r.Config.Image = "quay.io/powercloud/rsct-ppc64le:latest"
 
+	/*
 	haveServiceAccount, sa, err := r.ensureRSCTServiceAccount(ctx, rsct)
 	if err != nil {
 		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc service account: %w", err)
 	} else if !haveServiceAccount {
 		return reconcile.Result{}, fmt.Errorf("failed to get powervm-rmc service account: %w", err)
-	}
+	}*/
 
-	_, currentDaemonSet, err := r.ensureRSCTDaemonSet(ctx, sa, rsct)
+	_, currentDaemonSet, err := r.ensureRSCTDaemonSet(ctx, rsct)
 	if err != nil {
 		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc daemonSet: %w", err)
 	}
