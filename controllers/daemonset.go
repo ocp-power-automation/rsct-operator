@@ -41,12 +41,12 @@ const (
 )
 
 type DaemonSetConfig struct {
-	Namespace      string
-	Name           string
-	Image          string
-	MemoryLimit    string
-	CPURequest     string
-	MemoryRequest  string
+	Namespace     string
+	Name          string
+	Image         string
+	MemoryLimit   string
+	CPURequest    string
+	MemoryRequest string
 }
 
 // ensureRSCTDaemonSet ensures that the RSCT DaemonSet xists.
@@ -54,12 +54,12 @@ type DaemonSetConfig struct {
 func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, rsct *rsctv1alpha1.RSCT) (bool, *appsv1.DaemonSet, error) {
 
 	desired, err := desiredRSCTDaemonSet(&DaemonSetConfig{
-		Namespace:      r.Config.Namespace,
-		Name:           r.Config.Name,
-		Image:          r.Config.Image,
-		MemoryLimit:    "1Gi",
-		MemoryRequest:  "500Mi",
-		CPURequest:     "0.1",
+		Namespace:     r.Config.Namespace,
+		Name:          r.Config.Name,
+		Image:         r.Config.Image,
+		MemoryLimit:   "1Gi",
+		MemoryRequest: "500Mi",
+		CPURequest:    "0.1",
 	})
 
 	if err != nil {
@@ -189,11 +189,11 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 							},
 						},
 					},
-					HostNetwork:        true,
-					NodeSelector:       nodeSelectorLabels,
-					RestartPolicy:      corev1.RestartPolicyAlways,
-					Volumes:            volumes,
-					Tolerations:        tolerations,
+					HostNetwork:   true,
+					NodeSelector:  nodeSelectorLabels,
+					RestartPolicy: corev1.RestartPolicyAlways,
+					Volumes:       volumes,
+					Tolerations:   tolerations,
 				},
 			},
 		},
