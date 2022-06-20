@@ -189,6 +189,7 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 							},
 						},
 					},
+					ServiceAccountName: "powervm-rmc",
 					HostNetwork:   true,
 					NodeSelector:  nodeSelectorLabels,
 					RestartPolicy: corev1.RestartPolicyAlways,
