@@ -49,6 +49,7 @@ type RSCTReconciler struct {
 //+kubebuilder:rbac:groups=rsct.ibm.com,resources=rscts/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=rsct.ibm.com,resources=rscts/finalizers,verbs=update
 //+kubebuilder:rbac:groups=apps,resources=daemonsets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
 
 // the RSCT object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
@@ -70,15 +71,14 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	r.Config.Name = rsct.Name
 	r.Config.Image = "quay.io/powercloud/rsct-ppc64le:latest"
 
-	/*
-		haveServiceAccount, sa, err := r.ensureRSCTServiceAccount(ctx, rsct)
-		if err != nil {
-			return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc service account: %w", err)
-		} else if !haveServiceAccount {
-			return reconcile.Result{}, fmt.Errorf("failed to get powervm-rmc service account: %w", err)
-		}*/
+	haveServiceAccount, sa, err := r.ensureRSCTServiceAccount(ctx, rsct)
+	if err != nil {
+		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc service account: %w", err)
+	} else if !haveServiceAccount {
+		return reconcile.Result{}, fmt.Errorf("failed to get powervm-rmc service account: %w", err)
+	}
 
-	_, currentDaemonSet, err := r.ensureRSCTDaemonSet(ctx, rsct)
+	_, currentDaemonSet, err := r.ensureRSCTDaemonSet(ctx, sa, rsct)
 	if err != nil {
 		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc daemonSet: %w", err)
 	}
