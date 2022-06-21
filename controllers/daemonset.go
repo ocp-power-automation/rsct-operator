@@ -231,5 +231,5 @@ func (r *RSCTReconciler) updateRSCTDaemonSet(ctx context.Context, current, desir
 func rsctDaemonSetChanged(current, expected *appsv1.DaemonSet) (bool, *appsv1.DaemonSet) {
 	//updated := current.DeepCopy()
 	//TODO(mjturek): Do what the comment says
-	return true, nil
+	return false, nil
 }
