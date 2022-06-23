@@ -77,18 +77,11 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount
 		return false, nil, fmt.Errorf("failed to get current RSCT daemonSet: %w", err)
 	}
 
-	// create the deployment
+	// create the daemonset
 	if !exist {
 		if err := r.createRSCTDaemonSet(ctx, desired); err != nil {
 			return false, nil, err
 		}
-		return r.currentRSCTDaemonSet(ctx)
-	}
-
-	// update the deployment
-	if updated, err := r.updateRSCTDaemonSet(ctx, current, desired); err != nil {
-		return true, current, err
-	} else if updated {
 		return r.currentRSCTDaemonSet(ctx)
 	}
 
@@ -211,25 +204,4 @@ func (r *RSCTReconciler) createRSCTDaemonSet(ctx context.Context, ds *appsv1.Dae
 		return fmt.Errorf("failed to create RSCT daemonset %s/%s: %w", ds.Namespace, ds.Name, err)
 	}
 	return nil
-}
-
-// updateRSCTDaemonSet updates the in-cluster RSCT daemonset.
-// Returns a boolean indicating if an update was made, and an error when relevant.
-func (r *RSCTReconciler) updateRSCTDaemonSet(ctx context.Context, current, desired *appsv1.DaemonSet) (bool, error) {
-	changed, updated := rsctDaemonSetChanged(current, desired)
-	if !changed {
-		return false, nil
-	}
-
-	if err := r.Client.Update(ctx, updated); err != nil {
-		return false, fmt.Errorf("failed to update RSCT DaemonSet %s/%s: %w", desired.Namespace, desired.Name, err)
-	}
-	return true, nil
-}
-
-// rsctDaemonSetChanged returns a boolean indicating if an update is needed and the desired daemonset.
-func rsctDaemonSetChanged(current, expected *appsv1.DaemonSet) (bool, *appsv1.DaemonSet) {
-	//updated := current.DeepCopy()
-	//TODO(mjturek): Do what the comment says
-	return false, nil
 }
