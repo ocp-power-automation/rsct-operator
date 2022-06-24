@@ -130,6 +130,10 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 		},
 	}
 
+	cmd := []string{"/bin/sh", "-c",
+		"rmcdomainstatus -s ctrmc -a IP > /var/log/rsct.status && [ -s /var/log/rsct.status ]",
+	}
+
 	ds := &appsv1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      config.Name,
@@ -148,6 +152,17 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 						{
 							Name:  config.Name,
 							Image: config.Image,
+							LivenessProbe: &corev1.Probe{
+								ProbeHandler: corev1.ProbeHandler{
+									Exec: &corev1.ExecAction{
+										Command: cmd,
+									},
+								},
+								FailureThreshold: 3,
+								PeriodSeconds:    10,
+								SuccessThreshold: 1,
+								TimeoutSeconds:   1,
+							},
 							Ports: []corev1.ContainerPort{
 								{
 									ContainerPort: rmcPort,
@@ -181,6 +196,17 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 							SecurityContext: &corev1.SecurityContext{
 								Privileged: utilpointer.Bool(true),
 								RunAsUser:  utilpointer.Int64(0),
+							},
+							StartupProbe: &corev1.Probe{
+								ProbeHandler: corev1.ProbeHandler{
+									Exec: &corev1.ExecAction{
+										Command: cmd,
+									},
+								},
+								FailureThreshold: 60,
+								PeriodSeconds:    10,
+								SuccessThreshold: 1,
+								TimeoutSeconds:   1,
 							},
 						},
 					},
