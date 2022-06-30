@@ -1,3 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rsct-operator-privileged
+  namespace: rsct-operator-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:scc:privileged
+subjects:
+- kind: ServiceAccount
+  name: rsct-test
+  namespace: rsct-operator-system
+---
 apiVersion: rsct.ibm.com/v1alpha1
 kind: RSCT
 metadata:

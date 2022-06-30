@@ -29,7 +29,7 @@ import (
 	operatorv1alpha1 "github.com/mjturek/rsct-operator/api/v1alpha1"
 )
 
-// ensureExternalDNSServiceAccount ensures that the externalDNS service account exists.
+// ensureRSCTServiceAccount ensures that the RSCT service account exists.
 func (r *RSCTReconciler) ensureRSCTServiceAccount(ctx context.Context, rsct *operatorv1alpha1.RSCT) (bool, *corev1.ServiceAccount, error) {
 	nsName := types.NamespacedName{Namespace: rsct.Namespace, Name: rsct.Name}
 
@@ -54,7 +54,7 @@ func (r *RSCTReconciler) ensureRSCTServiceAccount(ctx context.Context, rsct *ope
 	return true, current, nil
 }
 
-// currentExternalDNSServiceAccount gets the current externalDNS service account resource.
+// currentRSCTServiceAccount gets the current RSCT service account resource.
 func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName types.NamespacedName) (bool, *corev1.ServiceAccount, error) {
 	sa := &corev1.ServiceAccount{}
 	if err := r.Client.Get(ctx, nsName, sa); err != nil {
@@ -66,7 +66,7 @@ func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName t
 	return true, sa, nil
 }
 
-// desiredExternalDNSServiceAccount returns the desired serivce account resource.
+// desiredRSCTServiceAccount returns the desired serivce account resource.
 func desiredRSCTServiceAccount(nsName types.NamespacedName) *corev1.ServiceAccount {
 	return &corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{

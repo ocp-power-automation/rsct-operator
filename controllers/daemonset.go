@@ -88,7 +88,7 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount
 	return true, current, nil
 }
 
-// currentExternalDNSDeployment gets the current externalDNS deployment resource.
+// currentRSCTDaemonSet gets the current RSCT daemon set resource.
 func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context) (bool, *appsv1.DaemonSet, error) {
 	ds := &appsv1.DaemonSet{}
 	nsName := types.NamespacedName{Namespace: r.Config.Namespace, Name: r.Config.Name}
@@ -101,7 +101,7 @@ func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context) (bool, *appsv
 	return true, ds, nil
 }
 
-// desiredExternalDNSDeployment returns the desired deployment resource.
+// desiredRSCTDaemonSet returns the desired daemon set resource.
 func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 	matchLabels := map[string]string{
 		"app": "powervm-rmc",
@@ -224,7 +224,7 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 	return ds, nil
 }
 
-// createExternalDNSDeployment creates the given deployment using the reconciler's client.
+// createRSCTDaemonSet creates the given daemon set using the reconciler's client.
 func (r *RSCTReconciler) createRSCTDaemonSet(ctx context.Context, ds *appsv1.DaemonSet) error {
 	if err := r.Client.Create(ctx, ds); err != nil {
 		return fmt.Errorf("failed to create RSCT daemonset %s/%s: %w", ds.Namespace, ds.Name, err)
