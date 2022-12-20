@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 // Package v1alpha1 contains API Schema definitions for the rsct v1alpha1 API group
-//+kubebuilder:object:generate=true
-//+groupName=rsct.ibm.com
+// +kubebuilder:object:generate=true
+// +groupName=rsct.ibm.com
 package v1alpha1
 
 import (

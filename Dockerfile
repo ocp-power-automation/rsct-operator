@@ -17,10 +17,10 @@ COPY controllers/ controllers/
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=ppc64le go build -a -o manager main.go
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+FROM ubi8:8.7-929
 WORKDIR /
+RUN mkdir /licenses
+COPY LICENSE /licenses
 COPY --from=builder /workspace/manager .
 USER 65532:65532
 
