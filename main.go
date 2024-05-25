@@ -31,8 +31,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	rsctv1alpha1 "github.com/mjturek/rsct-operator/api/v1alpha1"
-	"github.com/mjturek/rsct-operator/controllers"
+	rsctv1alpha1 "github.com/ocp-power-automation/rsct-operator/api/v1alpha1"
+	"github.com/ocp-power-automation/rsct-operator/controllers"
 	//+kubebuilder:scaffold:imports
 )
 

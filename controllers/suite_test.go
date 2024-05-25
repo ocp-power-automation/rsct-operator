@@ -30,7 +30,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	rsctv1alpha1 "github.com/mjturek/rsct-operator/api/v1alpha1"
+	rsctv1alpha1 "github.com/ocp-power-automation/rsct-operator/api/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 

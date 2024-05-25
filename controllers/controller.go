@@ -26,7 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	rsctv1alpha1 "github.com/mjturek/rsct-operator/api/v1alpha1"
+	rsctv1alpha1 "github.com/ocp-power-automation/rsct-operator/api/v1alpha1"
 )
 
 type RSCTConfig struct {

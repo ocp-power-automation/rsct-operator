@@ -26,7 +26,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	operatorv1alpha1 "github.com/mjturek/rsct-operator/api/v1alpha1"
+	operatorv1alpha1 "github.com/ocp-power-automation/rsct-operator/api/v1alpha1"
 )
 
 // ensureRSCTServiceAccount ensures that the RSCT service account exists.

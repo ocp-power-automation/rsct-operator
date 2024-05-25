@@ -1,4 +1,4 @@
-module github.com/mjturek/rsct-operator
+module github.com/ocp-power-automation/rsct-operator
 
 go 1.17
 
