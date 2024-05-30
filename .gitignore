@@ -1,0 +1,6 @@
+bin/
+config/crd/bases/
+config/rbac/role.yaml
+config/manifests/bases/
+cover.out
+bundle_*
