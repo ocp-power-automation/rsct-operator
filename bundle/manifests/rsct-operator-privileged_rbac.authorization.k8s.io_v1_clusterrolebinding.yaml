@@ -9,5 +9,5 @@ roleRef:
   name: system:openshift:scc:privileged
 subjects:
 - kind: ServiceAccount
-  name: rsct-test
+  name: rsct
   namespace: rsct-operator-system

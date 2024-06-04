@@ -1,0 +1,51 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: rsct-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: RSCT is the Schema for the rscts API
+      displayName: RSCT
+      kind: RSCT
+      name: rscts.rsct.ibm.com
+      version: v1alpha1
+  description: Deploys RSCT on all nodes of an OpenShift cluster.
+  displayName: RSCT Operator for IBM Power Virtual Server
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - rsct
+  - powervs
+  - ibm
+  - rmc
+  - power
+  links:
+  - name: Rsct Operator
+    url: https://rsct-operator.domain
+  maintainers:
+  - email: mjturek@us.ibm.com
+    name: Michael Turek
+  maturity: alpha
+  provider:
+    name: IBM
+  version: 0.0.0

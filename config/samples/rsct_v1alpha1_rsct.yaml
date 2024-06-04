@@ -9,11 +9,18 @@ roleRef:
   name: system:openshift:scc:privileged
 subjects:
 - kind: ServiceAccount
-  name: rsct-test
+  name: rsct
   namespace: rsct-operator-system
 ---
 apiVersion: rsct.ibm.com/v1alpha1
 kind: RSCT
 metadata:
-  name: rsct-test
+  labels:
+    app.kubernetes.io/name: rsct
+    app.kubernetes.io/instance: rsct
+    app.kubernetes.io/part-of: rsct-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: rsct-operator
+  name: rsct
   namespace: rsct-operator-system
+
