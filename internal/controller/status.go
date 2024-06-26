@@ -1,7 +1,8 @@
-package controllers
+package controller
 
 import (
 	"context"
+
 	rsctv1alpha1 "github.com/ocp-power-automation/rsct-operator/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 )
