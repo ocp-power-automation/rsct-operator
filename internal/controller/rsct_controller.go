@@ -71,10 +71,12 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return reconcile.Result{}, fmt.Errorf("failed to get RSCT %s: %w", req, err)
 	}
 
-	// TODO(mjturek): Allow image specification
 	r.Config.Namespace = rsct.Namespace
 	r.Config.Name = rsct.Name
-	r.Config.Image = "quay.io/powercloud/rsct-ppc64le:latest"
+	// Set default RSCT image if not specified
+	if rsct.Spec.Image != nil {
+		r.Config.Image = *rsct.Spec.Image
+	}
 
 	haveServiceAccount, sa, err := r.ensureRSCTServiceAccount(ctx, rsct)
 	if err != nil {

@@ -28,8 +28,10 @@ type RSCTSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of RSCT. Edit rsct_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Image is an RSCT image
+	// +kubebuilder:default="quay.io/powercloud/rsct-ppc64le:latest"
+	// +optional
+	Image *string `json:"image,omitempty"`
 }
 
 // RSCTStatus defines the observed state of RSCT
