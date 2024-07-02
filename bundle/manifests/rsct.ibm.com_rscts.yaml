@@ -39,9 +39,9 @@ spec:
           spec:
             description: RSCTSpec defines the desired state of RSCT
             properties:
-              foo:
-                description: Foo is an example field of RSCT. Edit rsct_types.go to
-                  remove/update
+              image:
+                default: quay.io/powercloud/rsct-ppc64le:latest
+                description: Image is an RSCT image
                 type: string
             type: object
           status:

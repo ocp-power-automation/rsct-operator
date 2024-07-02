@@ -23,19 +23,25 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+// DefaultRSCTImage is an default RSCT Image
+const DefaultRSCTImage = "quay.io/powercloud/rsct-ppc64le:latest"
+
 // RSCTSpec defines the desired state of RSCT
 type RSCTSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of RSCT. Edit rsct_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Image is an RSCT image
+	// +optional
+	// +kubebuilder:default="quay.io/powercloud/rsct-ppc64le:latest"
+	Image *string `json:"image,omitempty"`
 }
 
 // RSCTStatus defines the observed state of RSCT
 type RSCTStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
 }
 
 //+kubebuilder:object:root=true

@@ -37,7 +37,6 @@ const (
 	osID                = "rhcos"
 	rmcPort             = 657
 	rmcAppName          = "powervm-rmc"
-	rsctImage           = "quay.io/powercloud/rsct-ppc64le:latest"
 )
 
 type DaemonSetConfig struct {
