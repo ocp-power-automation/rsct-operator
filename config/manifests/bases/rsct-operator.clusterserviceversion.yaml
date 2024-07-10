@@ -46,6 +46,7 @@ spec:
   - email: mjturek@us.ibm.com
     name: Michael Turek
   maturity: alpha
+  minKubeVersion: 1.25.0
   provider:
     name: IBM
   version: 0.0.0
