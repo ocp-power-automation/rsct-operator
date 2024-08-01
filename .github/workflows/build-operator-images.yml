@@ -43,7 +43,7 @@ jobs:
 
       - name: Build operator container images and push
         id: docker_build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           file: Dockerfile
           tags: ${{ env.IMAGE_TAG_BASE }}:${{ env.VERSION }}, ${{ env.IMAGE_TAG_BASE }}:latest
