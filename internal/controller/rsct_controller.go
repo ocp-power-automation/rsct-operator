@@ -80,14 +80,14 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	haveServiceAccount, sa, err := r.ensureRSCTServiceAccount(ctx, rsct)
 	if err != nil {
-		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc service account: %w", err)
+		return reconcile.Result{}, fmt.Errorf("failed to ensure rsct service account: %w", err)
 	} else if !haveServiceAccount {
-		return reconcile.Result{}, fmt.Errorf("failed to get powervm-rmc service account: %w", err)
+		return reconcile.Result{}, fmt.Errorf("failed to get rsct service account: %w", err)
 	}
 
 	_, currentDaemonSet, err := r.ensureRSCTDaemonSet(ctx, sa, rsct)
 	if err != nil {
-		return reconcile.Result{}, fmt.Errorf("failed to ensure powervm-rmc daemonSet: %w", err)
+		return reconcile.Result{}, fmt.Errorf("failed to ensure rsct daemonSet: %w", err)
 	}
 	if err := r.updateRSCTStatus(ctx, rsct, currentDaemonSet); err != nil {
 		return reconcile.Result{}, fmt.Errorf("failed to update RSCT custom resource %s: %w", rsct.Name, err)
