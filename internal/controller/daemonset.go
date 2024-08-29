@@ -36,7 +36,7 @@ const (
 	masterNodeRoleLabel = "node-role.kubernetes.io/master"
 	osID                = "rhcos"
 	rmcPort             = 657
-	rmcAppName          = "powervm-rmc"
+	rmcAppName          = "rsct"
 )
 
 type DaemonSetConfig struct {
@@ -103,7 +103,7 @@ func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context) (bool, *appsv
 // desiredRSCTDaemonSet returns the desired daemon set resource.
 func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 	matchLabels := map[string]string{
-		"app": "powervm-rmc",
+		"app": "rsct",
 	}
 
 	nodeSelectorLabels := map[string]string{
