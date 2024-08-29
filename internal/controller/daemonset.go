@@ -34,7 +34,6 @@ import (
 const (
 	arch                = "ppc64le"
 	masterNodeRoleLabel = "node-role.kubernetes.io/master"
-	osID                = "rhcos"
 	rmcPort             = 657
 	rmcAppName          = "rsct"
 )
@@ -107,8 +106,7 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 	}
 
 	nodeSelectorLabels := map[string]string{
-		"kubernetes.io/arch":      "ppc64le",
-		"node.openshift.io/os_id": "rhcos",
+		"kubernetes.io/arch": "ppc64le",
 	}
 
 	tolerations := []corev1.Toleration{
