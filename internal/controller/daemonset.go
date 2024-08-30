@@ -27,7 +27,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	utilpointer "k8s.io/utils/pointer"
+	utilpointer "k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
@@ -191,8 +191,8 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 								},
 							},
 							SecurityContext: &corev1.SecurityContext{
-								Privileged: utilpointer.Bool(true),
-								RunAsUser:  utilpointer.Int64(0),
+								Privileged: utilpointer.To(true),
+								RunAsUser:  utilpointer.To(int64(0)),
 							},
 							StartupProbe: &corev1.Probe{
 								ProbeHandler: corev1.ProbeHandler{
