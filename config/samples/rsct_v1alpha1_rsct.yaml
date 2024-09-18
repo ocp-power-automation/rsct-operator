@@ -23,4 +23,5 @@ metadata:
     app.kubernetes.io/created-by: rsct-operator
   name: rsct
   namespace: rsct-operator-system
+spec: {}
 
