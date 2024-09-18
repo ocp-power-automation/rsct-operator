@@ -173,7 +173,7 @@ spec:
                 - --leader-elect
                 command:
                 - /manager
-                image: quay.io/powercloud/rsct-operator:0.0.1
+                image: ghcr.io/ocp-power-automation/rsct-operator:latest
                 livenessProbe:
                   httpGet:
                     path: /healthz
