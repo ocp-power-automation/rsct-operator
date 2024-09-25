@@ -1,0 +1,15 @@
+{
+    "schema": "olm.package",
+    "name": "rsct-operator",
+    "defaultChannel": "alpha"
+}
+{
+    "schema": "olm.channel",
+    "name": "alpha",
+    "package": "rsct-operator",
+    "entries": [
+        {
+            "name": "rsct-operator.v${VERSION}"
+        }
+    ]
+}
