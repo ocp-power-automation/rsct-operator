@@ -46,6 +46,11 @@ spec:
             type: object
           status:
             description: RSCTStatus defines the observed state of RSCT
+            properties:
+              state:
+                description: |-
+                  state reflects current observed state of RSCT resource
+                type: string
             type: object
         type: object
     served: true
