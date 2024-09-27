@@ -51,6 +51,7 @@ type RSCTReconciler struct {
 //+kubebuilder:rbac:groups=rsct.ibm.com,resources=rscts/finalizers,verbs=update
 //+kubebuilder:rbac:groups=apps,resources=daemonsets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups="",resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=pods,verbs=get;list;watch;
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -62,6 +63,7 @@ type RSCTReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
 func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+
 	_ = log.FromContext(ctx)
 	rsct := &rsctv1alpha1.RSCT{}
 	if err := r.Client.Get(ctx, req.NamespacedName, rsct); err != nil {
