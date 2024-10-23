@@ -4,18 +4,23 @@ metadata:
   annotations:
     alm-examples: '[]'
     capabilities: Basic Install
+    support: IBM
+    categories: "OpenShift Optional"
+    containerImage: "ghcr.io/ocp-power-automation/rsct-operator:latest"
+    repository: "https://github.com/ocp-power-automation/rsct-operator"
+    description: Deploys RSCT daemonset on all nodes of an OpenShift cluster
   name: rsct-operator.v0.0.0
-  namespace: placeholder
+  namespace: rsct-operator-system
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: RSCT is the Schema for the rscts API
+    - description: RSCT custom resource is the schema for the rscts API
       displayName: RSCT
       kind: RSCT
       name: rscts.rsct.ibm.com
       version: v1alpha1
-  description: Deploys RSCT on all nodes of an OpenShift cluster.
+  description: Deploys custom resource RSCT on all nodes of an OpenShift cluster.
   displayName: RSCT Operator for IBM Power Virtual Server
   icon:
   - base64data: ""
@@ -41,7 +46,7 @@ spec:
   - power
   links:
   - name: Rsct Operator
-    url: https://rsct-operator.domain
+    url: https://github.com/ocp-power-automation/rsct-operator
   maintainers:
   - email: mjturek@us.ibm.com
     name: Michael Turek
