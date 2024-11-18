@@ -48,7 +48,7 @@ jobs:
           file: Dockerfile
           tags: ${{ env.IMAGE_TAG_BASE }}:${{ env.VERSION }}, ${{ env.IMAGE_TAG_BASE }}:latest
           push: true
-          platforms: 'linux/ppc64le'
+          platforms: 'linux/ppc64le,linux/amd64'
           provenance: false
 
       - name: Build operator bundle and push

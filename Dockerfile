@@ -1,7 +1,5 @@
 # Build the manager binary
 FROM golang:1.22 AS builder
-ARG TARGETOS=linux
-ARG TARGETARCH=ppc64le
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
