@@ -290,6 +290,7 @@ BUNDLE_IMGS ?= $(BUNDLE_IMG)
 
 # The image tag given to the resulting catalog image (e.g. make catalog-build CATALOG_IMG=example.com/operator-catalog:v0.2.0).
 CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:v$(VERSION)
+CATALOG_IMG_LATEST ?= $(IMAGE_TAG_BASE)-catalog:latest
 
 # Set CATALOG_BASE_IMG to an existing catalog image tag to add $BUNDLE_IMGS to that image.
 ifneq ($(origin CATALOG_BASE_IMG), undefined)
@@ -310,10 +311,12 @@ catalog-build: opm ## Build a catalog image.
 	echo "FROM quay.io/operator-framework/opm:$(OPM_VERSION)-ppc64le" >> $(TMP_DIR).Dockerfile
 	cat catalog/Dockerfile_final_stage >> $(TMP_DIR).Dockerfile
     ## Building catalog image
-	$(CONTAINER_TOOL) build -f $(TMP_DIR).Dockerfile -t $(CATALOG_IMG) .
+	$(CONTAINER_TOOL) build -f $(TMP_DIR).Dockerfile -t $(CATALOG_IMG) -t $(CATALOG_IMG_LATEST) .
 	rm -rf $(TMP_DIR)
+	rm -rf $(TMP_DIR).Dockerfile
 
 # Push the catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
+	$(MAKE) docker-push IMG=$(CATALOG_IMG_LATEST)
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
