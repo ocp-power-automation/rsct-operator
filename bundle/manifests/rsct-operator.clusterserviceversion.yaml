@@ -24,7 +24,7 @@ metadata:
     capabilities: Basic Install
     categories: Monitoring
     containerImage: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha2
-    createdAt: "2024-12-10T05:23:35Z"
+    createdAt: "2025-01-09T11:53:38Z"
     description: Deploys the RSCT DaemonSet on all ppc64le architecture nodes of Kubernetes
       and OpenShift clusters.
     operators.operatorframework.io/builder: operator-sdk-v1.34.1
@@ -172,31 +172,7 @@ spec:
                         - linux
               containers:
               - args:
-                - --secure-listen-address=0.0.0.0:8443
-                - --upstream=http://127.0.0.1:8080/
-                - --logtostderr=true
-                - --v=0
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.15.0
-                name: kube-rbac-proxy
-                ports:
-                - containerPort: 8443
-                  name: https
-                  protocol: TCP
-                resources:
-                  limits:
-                    cpu: 500m
-                    memory: 128Mi
-                  requests:
-                    cpu: 5m
-                    memory: 64Mi
-                securityContext:
-                  allowPrivilegeEscalation: false
-                  capabilities:
-                    drop:
-                    - ALL
-              - args:
-                - --health-probe-bind-address=:8081
-                - --metrics-bind-address=127.0.0.1:8080
+                - --metrics-bind-address=:8443
                 - --leader-elect
                 command:
                 - /manager
