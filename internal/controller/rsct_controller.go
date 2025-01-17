@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 
+	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -101,5 +102,6 @@ func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 func (r *RSCTReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&rsctv1alpha1.RSCT{}).
+		Owns(&appsv1.DaemonSet{}).
 		Complete(r)
 }
