@@ -1,5 +1,5 @@
 
-ADD rsct-temp /configs
+ADD catalog /configs
 COPY --from=0 /tmp/cache /tmp/cache
 
 # Configure the entrypoint and command

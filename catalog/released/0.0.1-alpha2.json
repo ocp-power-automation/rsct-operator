@@ -1,0 +1,114 @@
+{
+    "schema": "olm.bundle",
+    "name": "rsct-operator.v0.0.1-alpha2",
+    "package": "rsct-operator",
+    "image": "ghcr.io/ocp-power-automation/rsct-operator-bundle:v0.0.1-alpha2",
+    "properties": [
+        {
+            "type": "olm.gvk",
+            "value": {
+                "group": "rsct.ibm.com",
+                "kind": "RSCT",
+                "version": "v1alpha1"
+            }
+        },
+        {
+            "type": "olm.package",
+            "value": {
+                "packageName": "rsct-operator",
+                "version": "0.0.1-alpha2"
+            }
+        },
+        {
+            "type": "olm.csv.metadata",
+            "value": {
+                "annotations": {
+                    "alm-examples": "[\n  {\n    \"apiVersion\": \"rsct.ibm.com/v1alpha1\",\n    \"kind\": \"RSCT\",\n    \"metadata\": {\n      \"labels\": {\n        \"app.kubernetes.io/created-by\": \"rsct-operator\",\n        \"app.kubernetes.io/instance\": \"rsct\",\n        \"app.kubernetes.io/managed-by\": \"kustomize\",\n        \"app.kubernetes.io/name\": \"rsct\",\n        \"app.kubernetes.io/part-of\": \"rsct-operator\"\n      },\n      \"name\": \"rsct\",\n      \"namespace\": \"rsct-operator-system\"\n    },\n    \"spec\": {}\n  }\n]",
+                    "capabilities": "Basic Install",
+                    "categories": "OpenShift Optional",
+                    "containerImage": "ghcr.io/ocp-power-automation/rsct-operator:latest",
+                    "createdAt": "2024-11-19T16:36:51Z",
+                    "description": "Deploys RSCT daemonset on all nodes of an OpenShift cluster",
+                    "operators.operatorframework.io/builder": "operator-sdk-v1.34.1",
+                    "operators.operatorframework.io/project_layout": "go.kubebuilder.io/v4",
+                    "repository": "https://github.com/ocp-power-automation/rsct-operator",
+                    "support": "IBM"
+                },
+                "apiServiceDefinitions": {},
+                "crdDescriptions": {
+                    "owned": [
+                        {
+                            "name": "rscts.rsct.ibm.com",
+                            "version": "v1alpha1",
+                            "kind": "RSCT",
+                            "displayName": "RSCT",
+                            "description": "RSCT is the Schema for the rscts API"
+                        }
+                    ]
+                },
+                "description": "Deploys custom resource RSCT on all nodes of an OpenShift cluster.",
+                "displayName": "RSCT Operator for IBM Power Virtual Server",
+                "installModes": [
+                    {
+                        "type": "OwnNamespace",
+                        "supported": true
+                    },
+                    {
+                        "type": "SingleNamespace",
+                        "supported": true
+                    },
+                    {
+                        "type": "MultiNamespace",
+                        "supported": false
+                    },
+                    {
+                        "type": "AllNamespaces",
+                        "supported": false
+                    }
+                ],
+                "keywords": [
+                    "rsct",
+                    "powervs",
+                    "ibm",
+                    "rmc",
+                    "power"
+                ],
+                "labels": {
+                    "operatorframework.io/arch.amd64": "supported",
+                    "operatorframework.io/arch.ppc64le": "supported"
+                },
+                "links": [
+                    {
+                        "name": "Rsct Operator",
+                        "url": "https://github.com/ocp-power-automation/rsct-operator"
+                    }
+                ],
+                "maintainers": [
+                    {
+                        "name": "Michael Turek",
+                        "email": "mjturek@us.ibm.com"
+                    }
+                ],
+                "maturity": "alpha",
+                "minKubeVersion": "1.25.0",
+                "provider": {
+                    "name": "IBM"
+                }
+            }
+        }
+    ],
+    "relatedImages": [
+        {
+            "name": "",
+            "image": "gcr.io/kubebuilder/kube-rbac-proxy:v0.15.0"
+        },
+        {
+            "name": "",
+            "image": "ghcr.io/ocp-power-automation/rsct-operator-bundle:v0.0.1-alpha2"
+        },
+        {
+            "name": "",
+            "image": "ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha2"
+        }
+    ]
+}

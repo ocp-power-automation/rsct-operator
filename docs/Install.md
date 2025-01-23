@@ -61,6 +61,34 @@ spec:
 EOF
 ```
 
+Note:
+To install specific operator version
+  - Use the `startingCSV` field within the spec and set `installPlanApproval` to `Manual`. 
+
+Example:
+```
+oc create -f - <<EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: rsct-operator-subscription
+  namespace: rsct-operator-system
+spec:
+  channel: "alpha"
+  installPlanApproval: Manual
+  name: rsct-operator
+  source: rsct-catalogsource
+  sourceNamespace: openshift-marketplace
+  startingCSV: rsct-operator.v0.0.1-alpha0
+EOF
+```
+  - Approve the installation of the operator by updating the approved field of the InstallPlan:
+```
+oc patch installplan install-abcd \
+    --namespace rsct-operator-system \
+    --type merge \
+    --patch '{"spec":{"approved":true}}'
+```
 4. Verify the operator deployment
 ```
 # oc get csv -n rsct-operator-system
