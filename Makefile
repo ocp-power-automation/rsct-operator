@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 0.0.1
+VERSION ?= 0.0.1-alpha2
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -302,18 +302,14 @@ endif
 # https://github.com/operator-framework/community-operators/blob/7f1438c/docs/packaging-operator.md#updating-your-existing-operator
 .PHONY: catalog-build
 catalog-build: opm ## Build a catalog image.
-	$(shell mkdir rsct-temp)
-	$(eval TMP_DIR := rsct-temp)
-	@envsubst < catalog/preamble_config_template.json > $(TMP_DIR)/rsct-operator-catalog.json
-	$(OPM) render $(BUNDLE_IMGS) >> $(TMP_DIR)/rsct-operator-catalog.json
-	$(OPM) generate dockerfile $(TMP_DIR) -i quay.io/operator-framework/opm:${OPM_VERSION}
+	$(OPM) render $(BUNDLE_IMGS) > catalog/released/$(VERSION).json
+	$(OPM) generate dockerfile catalog -i quay.io/operator-framework/opm:${OPM_VERSION}
     ## Apending Final stage for ppc64le
-	echo "FROM quay.io/operator-framework/opm:$(OPM_VERSION)-ppc64le" >> $(TMP_DIR).Dockerfile
-	cat catalog/Dockerfile_final_stage >> $(TMP_DIR).Dockerfile
+	echo "FROM quay.io/operator-framework/opm:$(OPM_VERSION)-ppc64le" >> catalog.Dockerfile
+	cat hack/Dockerfile_final_stage >> catalog.Dockerfile
     ## Building catalog image
-	$(CONTAINER_TOOL) build -f $(TMP_DIR).Dockerfile -t $(CATALOG_IMG) -t $(CATALOG_IMG_LATEST) .
-	rm -rf $(TMP_DIR)
-	rm -rf $(TMP_DIR).Dockerfile
+	$(CONTAINER_TOOL) build -f catalog.Dockerfile -t $(CATALOG_IMG) -t $(CATALOG_IMG_LATEST) .
+	rm -rf catalog.Dockerfile
 
 # Push the catalog image.
 .PHONY: catalog-push

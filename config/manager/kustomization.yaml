@@ -13,4 +13,3 @@ kind: Kustomization
 images:
 - name: controller
   newName: ghcr.io/ocp-power-automation/rsct-operator
-  newTag: 0.0.1-alpha2
