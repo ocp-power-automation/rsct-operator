@@ -4,6 +4,7 @@
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
 VERSION ?= 0.0.1-alpha2
+PREVIOUS_VERSION ?= 0.0.1-alpha1
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -291,6 +292,7 @@ BUNDLE_IMGS ?= $(BUNDLE_IMG)
 # The image tag given to the resulting catalog image (e.g. make catalog-build CATALOG_IMG=example.com/operator-catalog:v0.2.0).
 CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:v$(VERSION)
 CATALOG_IMG_LATEST ?= $(IMAGE_TAG_BASE)-catalog:latest
+CATALOG_PREVIOUS_IMG ?= $(IMAGE_TAG_BASE)-catalog:v$(PREVIOUS_VERSION)
 
 # Set CATALOG_BASE_IMG to an existing catalog image tag to add $BUNDLE_IMGS to that image.
 ifneq ($(origin CATALOG_BASE_IMG), undefined)
@@ -302,7 +304,8 @@ endif
 # https://github.com/operator-framework/community-operators/blob/7f1438c/docs/packaging-operator.md#updating-your-existing-operator
 .PHONY: catalog-build
 catalog-build: opm ## Build a catalog image.
-	$(OPM) render $(BUNDLE_IMGS) > catalog/released/$(VERSION).json
+	$(OPM) render $(BUNDLE_IMGS) > catalog/$(VERSION).json
+	$(OPM) render $(CATALOG_PREVIOUS_IMG) | jq -r 'select(.schema == "olm.bundle")' > catalog/previous_bundles.json
 	$(OPM) generate dockerfile catalog -i quay.io/operator-framework/opm:${OPM_VERSION}
     ## Apending Final stage for ppc64le
 	echo "FROM quay.io/operator-framework/opm:$(OPM_VERSION)-ppc64le" >> catalog.Dockerfile
@@ -310,6 +313,7 @@ catalog-build: opm ## Build a catalog image.
     ## Building catalog image
 	$(CONTAINER_TOOL) build -f catalog.Dockerfile -t $(CATALOG_IMG) -t $(CATALOG_IMG_LATEST) .
 	rm -rf catalog.Dockerfile
+	rm -rf catalog/$(VERSION).json
 
 # Push the catalog image.
 .PHONY: catalog-push
