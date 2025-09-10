@@ -37,6 +37,7 @@ import (
 
 	rsctv1alpha1 "github.com/ocp-power-automation/rsct-operator/api/v1alpha1"
 	"github.com/ocp-power-automation/rsct-operator/internal/controller"
+	rsctwebhook "github.com/ocp-power-automation/rsct-operator/internal/webhook/rsct"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -149,6 +150,11 @@ func main() {
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
+
+	if err := rsctwebhook.RegisterWebhooks(mgr); err != nil {
+		setupLog.Error(err, "unable to register webhooks")
+		os.Exit(1)
+	}
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")
