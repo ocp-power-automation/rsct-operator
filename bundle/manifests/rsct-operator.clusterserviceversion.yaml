@@ -24,7 +24,7 @@ metadata:
     capabilities: Basic Install
     categories: Monitoring
     containerImage: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha2
-    createdAt: "2025-01-23T05:21:31Z"
+    createdAt: "2026-01-13T16:50:06Z"
     description: Deploys the RSCT DaemonSet on all ppc64le architecture nodes of Kubernetes
       and OpenShift clusters.
     operators.operatorframework.io/builder: operator-sdk-v1.34.1
