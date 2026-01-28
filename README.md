@@ -15,10 +15,10 @@ oc create -k "https://github.com/ocp-power-automation/rsct-operator/config/defau
 ```
 
 ### Create `RSCT` resource
-1. Create the cluster role binding and `RSCT` resources
-   ```sh
-   oc create -k "https://github.com/ocp-power-automation/rsct-operator/config/samples/?ref=main"
-   ```
+Run the following command to deploy the `RSCT` resource
+```sh
+oc create -k "https://github.com/ocp-power-automation/rsct-operator/config/samples/?ref=main"
+```
 
 ### Check that the Operator is Running
 Check that the pods have been created and are running
