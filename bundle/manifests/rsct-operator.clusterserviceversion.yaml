@@ -15,26 +15,25 @@ metadata:
               "app.kubernetes.io/name": "rsct",
               "app.kubernetes.io/part-of": "rsct-operator"
             },
-            "name": "rsct",
-            "namespace": "rsct-operator-system"
+            "name": "rsct"
           },
           "spec": {}
         }
       ]
     capabilities: Basic Install
     categories: Monitoring
-    containerImage: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha2
-    createdAt: "2026-01-13T16:50:06Z"
+    containerImage: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha3
+    createdAt: "2026-01-29T06:49:34Z"
     description: Deploys the RSCT DaemonSet on all ppc64le architecture nodes of Kubernetes
       and OpenShift clusters.
-    operators.operatorframework.io/builder: operator-sdk-v1.34.1
+    operators.operatorframework.io/builder: operator-sdk-v1.41.1
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v4
     repository: https://github.com/ocp-power-automation/rsct-operator
     support: IBM
   labels:
     operatorframework.io/arch.amd64: supported
     operatorframework.io/arch.ppc64le: supported
-  name: rsct-operator.v0.0.1-alpha2
+  name: rsct-operator.v0.0.1-alpha3
   namespace: rsct-operator-system
 spec:
   apiservicedefinitions: {}
@@ -132,6 +131,16 @@ spec:
           - subjectaccessreviews
           verbs:
           - create
+        - apiGroups:
+          - security.openshift.io
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - get
+          - list
+          - watch
+          - update
+          - patch
         serviceAccountName: rsct-operator-controller-manager
       deployments:
       - label:
@@ -176,7 +185,7 @@ spec:
                 - --leader-elect
                 command:
                 - /manager
-                image: ghcr.io/ocp-power-automation/rsct-operator:latest
+                image: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha3
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -248,7 +257,7 @@ spec:
     type: SingleNamespace
   - supported: false
     type: MultiNamespace
-  - supported: false
+  - supported: true
     type: AllNamespaces
   keywords:
   - rsct
@@ -270,4 +279,4 @@ spec:
   minKubeVersion: 1.25.0
   provider:
     name: IBM
-  version: 0.0.1-alpha2
+  version: 0.0.1-alpha3

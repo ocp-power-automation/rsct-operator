@@ -15,3 +15,5 @@ entries:
     replaces: rsct-operator.v0.0.1-alpha0
   - name: rsct-operator.v0.0.1-alpha2
     replaces: rsct-operator.v0.0.1-alpha1
+  - name: rsct-operator.v0.0.1-alpha3
+    replaces: rsct-operator.v0.0.1-alpha2
