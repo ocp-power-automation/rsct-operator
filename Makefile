@@ -49,17 +49,17 @@ endif
 
 # Set the Operator SDK version to use. By default, what is installed on the system is used.
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
-OPERATOR_SDK_VERSION ?= v1.34.1
+OPERATOR_SDK_VERSION ?= v1.42.0
 
 # Set the OPM version to use. By default, what is installed on the system is used.
 # This is useful for building catalog image
-OPM_VERSION ?= v1.43.0
+OPM_VERSION ?= v1.56.0
 
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION = 1.28.3
+ENVTEST_K8S_VERSION = 1.31.0
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -127,7 +127,7 @@ test-e2e:
 	go test ./test/e2e/ -v -ginkgo.v
 	
 GOLANGCI_LINT = $(shell pwd)/bin/golangci-lint
-GOLANGCI_LINT_VERSION ?= v1.54.2
+GOLANGCI_LINT_VERSION ?= v1.60.1
 golangci-lint:
 	@[ -f $(GOLANGCI_LINT) ] || { \
 	set -e ;\
@@ -214,8 +214,8 @@ CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 
 ## Tool Versions
-KUSTOMIZE_VERSION ?= v5.2.1
-CONTROLLER_TOOLS_VERSION ?= v0.15.0
+KUSTOMIZE_VERSION ?= v5.4.3
+CONTROLLER_TOOLS_VERSION ?= v0.16.5
 
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
