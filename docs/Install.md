@@ -93,7 +93,7 @@ oc patch installplan install-abcd \
 ```
 # oc get csv -n rsct-operator-system
 NAME                           DISPLAY                                      VERSION        REPLACES                      PHASE
-rsct-operator.v0.0.1-alpha2    RSCT Operator for IBM Power Systems          0.0.1-alpha2                                 Succeeded
+rsct-operator.v0.0.1-alpha3    RSCT Operator for IBM Power Systems          0.0.1-alpha3                                 Succeeded
 
 # oc get pods -n rsct-operator-system
 NAME                                                READY   STATUS    RESTARTS   AGE
