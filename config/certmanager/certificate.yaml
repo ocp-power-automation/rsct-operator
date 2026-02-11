@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: serving-cert
+  namespace: system
+spec:
+  secretName: webhook-server-cert
+  issuerRef:
+    name: rsct-operator-selfsigned-issuer
+    kind: Issuer
+  commonName: rsct-operator-webhook-service.rsct-operator-system.svc
+  dnsNames:
+  - rsct-operator-webhook-service.rsct-operator-system.svc
+  - rsct-operator-webhook-service.rsct-operator-system.svc.cluster.local
