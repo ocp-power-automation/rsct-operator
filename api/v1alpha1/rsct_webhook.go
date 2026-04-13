@@ -20,11 +20,9 @@ import (
 	"context"
 	"fmt"
 
-	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -33,8 +31,7 @@ var rsctlog = logf.Log.WithName("rsct-resource")
 
 // SetupWebhookWithManager will setup the manager to manage the webhooks
 func (r *RSCT) SetupWebhookWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewWebhookManagedBy(mgr).
-		For(r).
+	return ctrl.NewWebhookManagedBy(mgr, &RSCT{}).
 		WithValidator(&RSCTValidator{Client: mgr.GetClient()}).
 		Complete()
 }
@@ -47,15 +44,9 @@ type RSCTValidator struct {
 	Client client.Client
 }
 
-var _ webhook.CustomValidator = &RSCTValidator{}
-
-// ValidateCreate implements webhook.CustomValidator so a webhook will be registered for the type
-func (v *RSCTValidator) ValidateCreate(ctx context.Context, obj runtime.Object) (admission.Warnings, error) {
-	rsct, ok := obj.(*RSCT)
-	if !ok {
-		return nil, fmt.Errorf("expected a RSCT object but got %T", obj)
-	}
-	rsctlog.Info("validate create", "name", rsct.Name)
+// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
+func (v *RSCTValidator) ValidateCreate(ctx context.Context, obj *RSCT) (admission.Warnings, error) {
+	rsctlog.Info("validate create", "name", obj.Name)
 
 	rsctList := &RSCTList{}
 	if err := v.Client.List(ctx, rsctList); err != nil {
@@ -69,25 +60,17 @@ func (v *RSCTValidator) ValidateCreate(ctx context.Context, obj runtime.Object) 
 	return nil, nil
 }
 
-// ValidateUpdate implements webhook.CustomValidator so a webhook will be registered for the type
-func (v *RSCTValidator) ValidateUpdate(ctx context.Context, oldObj, newObj runtime.Object) (admission.Warnings, error) {
-	rsct, ok := newObj.(*RSCT)
-	if !ok {
-		return nil, fmt.Errorf("expected a RSCT object but got %T", newObj)
-	}
-	rsctlog.Info("validate update", "name", rsct.Name)
+// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
+func (v *RSCTValidator) ValidateUpdate(ctx context.Context, oldObj, newObj *RSCT) (admission.Warnings, error) {
+	rsctlog.Info("validate update", "name", newObj.Name)
 
 	// Update is allowed for the existing instance
 	return nil, nil
 }
 
-// ValidateDelete implements webhook.CustomValidator so a webhook will be registered for the type
-func (v *RSCTValidator) ValidateDelete(ctx context.Context, obj runtime.Object) (admission.Warnings, error) {
-	rsct, ok := obj.(*RSCT)
-	if !ok {
-		return nil, fmt.Errorf("expected a RSCT object but got %T", obj)
-	}
-	rsctlog.Info("validate delete", "name", rsct.Name)
+// ValidateDelete implements webhook.Validator so a webhook will be registered for the type
+func (v *RSCTValidator) ValidateDelete(ctx context.Context, obj *RSCT) (admission.Warnings, error) {
+	rsctlog.Info("validate delete", "name", obj.Name)
 
 	// Delete is always allowed
 	return nil, nil
