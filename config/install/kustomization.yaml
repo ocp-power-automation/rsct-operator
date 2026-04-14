@@ -1,0 +1,8 @@
+# This kustomization installs both cert-manager and the rsct-operator
+# Use this for a complete installation
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- https://github.com/cert-manager/cert-manager/releases/download/v1.20.2/cert-manager.yaml
+- ../default
