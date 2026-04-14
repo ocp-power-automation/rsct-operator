@@ -14,7 +14,7 @@ The `RSCT` Operator enables RSCT on a cluster.
 
 1. Get the latest version of the RSCT Operator and set it as an environment variable:
 ```sh
-export RSCT_VERSION=$(curl -s "https://api.github.com/repos/ocp-power-automation/rsct-operator/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+export RSCT_VERSION=$(curl -s "https://api.github.com/repos/ocp-power-automation/rsct-operator/releases" | grep '"tag_name":' | head -n 1 | sed -E 's/.*"([^"]+)".*/\1/')
 ```
 
 2. Run the following command to deploy the `RSCT` Operator using the version variable:
