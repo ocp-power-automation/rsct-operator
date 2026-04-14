@@ -14,12 +14,12 @@ The `RSCT` Operator enables RSCT on a cluster.
 
 1. Get the latest version of the RSCT Operator and set it as an environment variable:
 ```sh
-export RSCT_VERSION=$(curl -s "https://api.github.com/repos/ocp-power-automation/rsct-operator/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+export RSCT_VERSION=$(curl -s "https://api.github.com/repos/ocp-power-automation/rsct-operator/releases" | grep '"tag_name":' | head -n 1 | sed -E 's/.*"([^"]+)".*/\1/')
 ```
 
-2. Run the following command to deploy the `RSCT` Operator using the version variable:
+2. Run the following command to deploy cert-manager and the `RSCT` Operator using the version variable:
 ```sh
-oc create -k "https://github.com/ocp-power-automation/rsct-operator/config/default/?ref=${RSCT_VERSION}"
+oc apply -k "https://github.com/ocp-power-automation/rsct-operator/config/install/?ref=${RSCT_VERSION}"
 ```
 
 #### Option 2: Installing via OperatorHub
@@ -36,7 +36,7 @@ You can also install the RSCT Operator directly from the OpenShift OperatorHub.
 ### Create `RSCT` resource
 Run the following command to deploy the `RSCT` resource
 ```sh
-oc create -k "https://github.com/ocp-power-automation/rsct-operator/config/samples/?ref=${RSCT_VERSION}"
+oc apply -k "https://github.com/ocp-power-automation/rsct-operator/config/samples/?ref=${RSCT_VERSION}"
 ```
 
 ### Check that the Operator is Running
