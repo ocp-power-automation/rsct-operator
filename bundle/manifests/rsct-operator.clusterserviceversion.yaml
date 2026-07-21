@@ -22,7 +22,7 @@ metadata:
       ]
     capabilities: Basic Install
     categories: Monitoring
-    containerImage: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha2
+    containerImage: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha4
     createdAt: "2026-01-29T10:21:08Z"
     description: Deploys the RSCT DaemonSet on all ppc64le architecture nodes of Kubernetes
       and OpenShift clusters.
@@ -33,7 +33,7 @@ metadata:
   labels:
     operatorframework.io/arch.amd64: supported
     operatorframework.io/arch.ppc64le: supported
-  name: rsct-operator.v0.0.1-alpha2
+  name: rsct-operator.v0.0.1-alpha4
   namespace: rsct-operator-system
 spec:
   apiservicedefinitions: {}
@@ -185,7 +185,7 @@ spec:
                 - --leader-elect
                 command:
                 - /manager
-                image: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha2
+                image: ghcr.io/ocp-power-automation/rsct-operator:0.0.1-alpha4
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -279,4 +279,4 @@ spec:
   minKubeVersion: 1.25.0
   provider:
     name: IBM
-  version: 0.0.1-alpha2
+  version: 0.0.1-alpha4
