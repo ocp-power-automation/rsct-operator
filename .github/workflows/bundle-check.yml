@@ -35,7 +35,11 @@ jobs:
 
       - name: Check bundle directory is up to date
         run: |
-          if ! git diff --exit-code bundle/; then
+          # createdAt is stamped with the current time on every `generate bundle`
+          # run, so exclude it from the meaningful diff.
+          DIFF=$(git diff bundle/ | grep -v '^[+-][[:space:]]*createdAt:' | grep -E '^[+-][^+-]' || true)
+          if [ -n "$DIFF" ]; then
+            git diff bundle/ | grep -v '^[+-][[:space:]]*createdAt:'
             echo ""
             echo "❌ The bundle/ directory is out of date."
             echo "   Run 'make bundle' locally and commit the changes."
