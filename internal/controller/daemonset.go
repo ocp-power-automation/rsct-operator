@@ -52,7 +52,7 @@ type DaemonSetConfig struct {
 // Returns a Boolean value indicating whether the daemonSet exists, a pointer to the daemonSet, and an error when relevant.
 func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount *corev1.ServiceAccount, rsct *rsctv1alpha1.RSCT) (bool, *appsv1.DaemonSet, error) {
 
-	desired, err := desiredRSCTDaemonSet(&DaemonSetConfig{
+	desired := desiredRSCTDaemonSet(&DaemonSetConfig{
 		Namespace:      r.Config.Namespace,
 		Name:           r.Config.Name,
 		Image:          r.Config.Image,
@@ -61,10 +61,6 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount
 		CPURequest:     "0.1",
 		ServiceAccount: serviceAccount,
 	})
-
-	if err != nil {
-		return false, nil, fmt.Errorf("failed to build RSCT daemonSet: %w", err)
-	}
 
 	if err := controllerutil.SetControllerReference(rsct, desired, r.Scheme); err != nil {
 		return false, nil, fmt.Errorf("failed to set the controller reference for daemonSet: %w", err)
@@ -90,7 +86,7 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount
 func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context) (bool, *appsv1.DaemonSet, error) {
 	ds := &appsv1.DaemonSet{}
 	nsName := types.NamespacedName{Namespace: r.Config.Namespace, Name: r.Config.Name}
-	if err := r.Client.Get(ctx, nsName, ds); err != nil {
+	if err := r.Get(ctx, nsName, ds); err != nil {
 		if errors.IsNotFound(err) {
 			return false, nil, nil
 		}
@@ -100,7 +96,7 @@ func (r *RSCTReconciler) currentRSCTDaemonSet(ctx context.Context) (bool, *appsv
 }
 
 // desiredRSCTDaemonSet returns the desired daemon set resource.
-func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
+func desiredRSCTDaemonSet(config *DaemonSetConfig) *appsv1.DaemonSet {
 	matchLabels := map[string]string{
 		"app": "rsct",
 	}
@@ -218,12 +214,12 @@ func desiredRSCTDaemonSet(config *DaemonSetConfig) (*appsv1.DaemonSet, error) {
 		},
 	}
 
-	return ds, nil
+	return ds
 }
 
 // createRSCTDaemonSet creates the given daemon set using the reconciler's client.
 func (r *RSCTReconciler) createRSCTDaemonSet(ctx context.Context, ds *appsv1.DaemonSet) error {
-	if err := r.Client.Create(ctx, ds); err != nil {
+	if err := r.Create(ctx, ds); err != nil {
 		return fmt.Errorf("failed to create RSCT daemonset %s/%s: %w", ds.Namespace, ds.Name, err)
 	}
 	return nil
