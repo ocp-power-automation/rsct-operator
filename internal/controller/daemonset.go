@@ -83,7 +83,13 @@ func (r *RSCTReconciler) ensureRSCTDaemonSet(ctx context.Context, serviceAccount
 		return r.currentRSCTDaemonSet(ctx)
 	}
 
-	return true, current, nil
+	// reconcile the image; return the updated object so callers see the new image.
+	updated, err := r.reconcileRSCTDaemonSetImage(ctx, current, desired)
+	if err != nil {
+		return false, nil, err
+	}
+
+	return true, updated, nil
 }
 
 // currentRSCTDaemonSet gets the current RSCT daemon set resource.
@@ -227,4 +233,29 @@ func (r *RSCTReconciler) createRSCTDaemonSet(ctx context.Context, ds *appsv1.Dae
 		return fmt.Errorf("failed to create RSCT daemonset %s/%s: %w", ds.Namespace, ds.Name, err)
 	}
 	return nil
+}
+
+// reconcileRSCTDaemonSetImage updates the container image on the live DaemonSet
+// when it differs from the desired image, triggering a Kubernetes rolling update.
+// It returns the object that callers should use: the updated copy when a write
+// occurred, or current unchanged when the images already matched.
+func (r *RSCTReconciler) reconcileRSCTDaemonSetImage(ctx context.Context, current, desired *appsv1.DaemonSet) (*appsv1.DaemonSet, error) {
+	if len(current.Spec.Template.Spec.Containers) == 0 {
+		return nil, fmt.Errorf("current RSCT daemonset %s/%s has no containers", current.Namespace, current.Name)
+	}
+
+	// desired is always built by desiredRSCTDaemonSet, which defines exactly one
+	// container, so indexing [0] here is safe without a length check.
+	desiredImage := desired.Spec.Template.Spec.Containers[0].Image
+	if current.Spec.Template.Spec.Containers[0].Image == desiredImage {
+		return current, nil
+	}
+
+	updated := current.DeepCopy()
+	updated.Spec.Template.Spec.Containers[0].Image = desiredImage
+
+	if err := r.Client.Update(ctx, updated); err != nil {
+		return nil, fmt.Errorf("failed to update RSCT daemonset %s/%s: %w", updated.Namespace, updated.Name, err)
+	}
+	return updated, nil
 }
