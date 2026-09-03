@@ -56,10 +56,7 @@ func TestDesiredRSCTDaemonSet_ContainerNameIsAlwaysRmcAppName(t *testing.T) {
 				ServiceAccount: serviceAccount(crName, "default"),
 			}
 
-			ds, err := desiredRSCTDaemonSet(config)
-			if err != nil {
-				t.Fatalf("desiredRSCTDaemonSet(%q) returned unexpected error: %v", crName, err)
-			}
+			ds := desiredRSCTDaemonSet(config)
 
 			containers := ds.Spec.Template.Spec.Containers
 			if len(containers) != 1 {
