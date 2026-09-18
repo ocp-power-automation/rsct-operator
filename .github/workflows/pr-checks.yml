@@ -1,0 +1,130 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+
+env:
+  GO_VERSION: "1.26"
+
+jobs:
+  # ── 1. Go build (cross-compile for target platform) ──────────────────────────
+  build:
+    name: Build (ppc64le)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Build
+        run: GOOS=linux GOARCH=ppc64le go build ./...
+
+  # ── 2. Unit tests ─────────────────────────────────────────────────────────────
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run tests
+        run: make test
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: cover.out
+
+  # ── 3. Lint ───────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.9.0
+
+  # ── 4. go vet ─────────────────────────────────────────────────────────────────
+  vet:
+    name: go vet
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: go vet
+        run: go vet ./...
+
+  # ── 5. go.mod / go.sum tidy check ─────────────────────────────────────────────
+  tidy:
+    name: go mod tidy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Check go.mod and go.sum are tidy
+        run: |
+          go mod tidy
+          if ! git diff --exit-code go.mod go.sum; then
+            echo ""
+            echo "❌ go.mod or go.sum is not tidy."
+            echo "   Run 'go mod tidy' locally and commit the changes."
+            exit 1
+          fi
+
+  # ── 6. Generated manifests up-to-date check ───────────────────────────────────
+  manifests:
+    name: Generated manifests up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run make manifests generate
+        run: make manifests generate
+
+      - name: Check no diff in generated files
+        run: |
+          if ! git diff --exit-code config/ api/; then
+            echo ""
+            echo "❌ Generated manifests/code are out of date."
+            echo "   Run 'make manifests generate' locally and commit the changes."
+            exit 1
+          fi
