@@ -53,7 +53,7 @@ OPERATOR_SDK_VERSION ?= v1.42.0
 
 # Set the OPM version to use. By default, what is installed on the system is used.
 # This is useful for building catalog image
-OPM_VERSION ?= v1.56.0
+OPM_VERSION ?= v1.74.0
 
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
@@ -294,6 +294,7 @@ BUNDLE_IMGS ?= $(BUNDLE_IMG)
 CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:v$(VERSION)
 CATALOG_IMG_LATEST ?= $(IMAGE_TAG_BASE)-catalog:latest
 CATALOG_PREVIOUS_IMG ?= $(PREVIOUS_IMAGE_TAG_BASE)-catalog:v$(PREVIOUS_VERSION)
+CATALOG_PLATFORM ?= linux/ppc64le
 
 # Set CATALOG_BASE_IMG to an existing catalog image tag to add $BUNDLE_IMGS to that image.
 ifneq ($(origin CATALOG_BASE_IMG), undefined)
@@ -308,10 +309,10 @@ catalog-build: opm ## Build a catalog image.
 	$(OPM) render $(BUNDLE_IMGS) > catalog/$(VERSION).json
 	$(OPM) render $(CATALOG_PREVIOUS_IMG) | jq -r 'select(.schema == "olm.bundle")' > catalog/previous_bundles.json
 	$(OPM) generate dockerfile catalog -i quay.io/operator-framework/opm:${OPM_VERSION}
-    ## Apending Final stage for ppc64le
-	echo "FROM quay.io/operator-framework/opm:$(OPM_VERSION)-ppc64le" >> catalog.Dockerfile
+	## Appending Final stage for target architecture without requiring QEMU emulation in builder stage
+	echo "FROM --platform=$(CATALOG_PLATFORM) quay.io/operator-framework/opm:$(OPM_VERSION)" >> catalog.Dockerfile
 	cat hack/Dockerfile_final_stage >> catalog.Dockerfile
-    ## Building catalog image
+	## Building catalog image
 	$(CONTAINER_TOOL) build -f catalog.Dockerfile -t $(CATALOG_IMG) -t $(CATALOG_IMG_LATEST) .
 	rm -rf catalog.Dockerfile
 	rm -rf catalog/$(VERSION).json
