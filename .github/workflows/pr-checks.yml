@@ -64,6 +64,7 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.12.2
+          install-mode: "goinstall"
 
   # ── 4. go vet ─────────────────────────────────────────────────────────────────
   vet:
