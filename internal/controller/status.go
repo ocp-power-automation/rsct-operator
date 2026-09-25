@@ -38,12 +38,12 @@ func evalOperatorStatus(podList *corev1.PodList) string {
 	var effectiveStatus PodStatus
 	var podsStatus []PodStatus
 	for _, pod := range podList.Items {
-		switch {
-		case pod.Status.Phase == corev1.PodPending:
+		switch pod.Status.Phase {
+		case corev1.PodPending:
 			podsStatus = append(podsStatus, PENDING)
-		case pod.Status.Phase == corev1.PodFailed:
+		case corev1.PodFailed:
 			podsStatus = append(podsStatus, FAILED)
-		case pod.Status.Phase == corev1.PodRunning:
+		case corev1.PodRunning:
 			podsStatus = append(podsStatus, RUNNING)
 		default:
 			podsStatus = append(podsStatus, UNKNOWN)

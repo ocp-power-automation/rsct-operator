@@ -66,7 +66,7 @@ type RSCTReconciler struct {
 func (r *RSCTReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 	rsct := &rsctv1alpha1.RSCT{}
-	if err := r.Client.Get(ctx, req.NamespacedName, rsct); err != nil {
+	if err := r.Get(ctx, req.NamespacedName, rsct); err != nil {
 		if errors.IsNotFound(err) {
 			return reconcile.Result{}, nil
 		}
