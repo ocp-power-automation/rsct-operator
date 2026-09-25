@@ -1,5 +1,7 @@
+version: "2"
+
 run:
-  deadline: 5m
+  timeout: 5m
   allow-parallel-runners: true
 
 issues:
@@ -16,17 +18,16 @@ issues:
       linters:
         - dupl
         - lll
+
 linters:
-  disable-all: true
+  default: none
   enable:
     - dupl
     - errcheck
-    - exportloopref
     - goconst
     - gocyclo
     - gofmt
     - goimports
-    - gosimple
     - govet
     - ineffassign
     - lll
@@ -34,7 +35,6 @@ linters:
     - nakedret
     - prealloc
     - staticcheck
-    - typecheck
     - unconvert
     - unparam
     - unused
