@@ -60,7 +60,7 @@ func (r *RSCTReconciler) ensureRSCTServiceAccount(ctx context.Context, rsct *ope
 // currentRSCTServiceAccount gets the current RSCT service account resource and ensures it has privileged SCC.
 func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName types.NamespacedName) (bool, *corev1.ServiceAccount, error) {
 	sa := &corev1.ServiceAccount{}
-	if err := r.Client.Get(ctx, nsName, sa); err != nil {
+	if err := r.Get(ctx, nsName, sa); err != nil {
 		if errors.IsNotFound(err) {
 			return false, nil, nil
 		}
@@ -74,7 +74,7 @@ func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName t
 		Kind:    "SecurityContextConstraints",
 	}
 
-	mapper := r.Client.RESTMapper()
+	mapper := r.RESTMapper()
 	_, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if meta.IsNoMatchError(err) {
 		// skip SCC logic
@@ -85,7 +85,7 @@ func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName t
 
 	// for OpenShift, ensure the service account has privileged SCC
 	scc := &securityv1.SecurityContextConstraints{}
-	if err := r.Client.Get(ctx, types.NamespacedName{Name: "privileged"}, scc); err != nil {
+	if err := r.Get(ctx, types.NamespacedName{Name: "privileged"}, scc); err != nil {
 		return true, sa, fmt.Errorf("error getting privileged SCC: %w", err)
 	}
 
@@ -95,7 +95,7 @@ func (r *RSCTReconciler) currentRSCTServiceAccount(ctx context.Context, nsName t
 		patch := client.MergeFrom(scc.DeepCopy())
 		scc.Users = append(scc.Users, saUser)
 
-		if err := r.Client.Patch(ctx, scc, patch); err != nil {
+		if err := r.Patch(ctx, scc, patch); err != nil {
 			return true, sa, fmt.Errorf("failed to patch privileged SCC: %w", err)
 		}
 	}
@@ -124,7 +124,7 @@ func desiredRSCTServiceAccount(nsName types.NamespacedName) *corev1.ServiceAccou
 
 // createRSCTServiceAccount creates the given service account using the reconciler's client.
 func (r *RSCTReconciler) createRSCTServiceAccount(ctx context.Context, sa *corev1.ServiceAccount) error {
-	if err := r.Client.Create(ctx, sa); err != nil {
+	if err := r.Create(ctx, sa); err != nil {
 		return fmt.Errorf("failed to create RSCT service account %s/%s: %w", sa.Namespace, sa.Name, err)
 	}
 
