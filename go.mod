@@ -4,7 +4,7 @@ go 1.27.0
 
 require (
 	github.com/onsi/ginkgo/v2 v2.34.0
-	github.com/onsi/gomega v1.43.0
+	github.com/onsi/gomega v1.44.0
 	github.com/openshift/api v0.0.0-20260116192047-6fb7fdae95fd
 	k8s.io/api v0.37.2
 	k8s.io/apimachinery v0.37.2
